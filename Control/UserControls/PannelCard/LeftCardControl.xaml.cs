@@ -297,8 +297,12 @@ namespace GeekDesk.Control.UserControls.PannelCard
         /// <param name="e"></param>
         private void DeleteMenu(object sender, RoutedEventArgs e)
         {
-
             MenuInfo menuInfo = ((MenuItem)sender).Tag as MenuInfo;
+            if (menuInfo.MenuType == MenuType.FREQUENT)
+            {
+                HandyControl.Controls.Growl.Warning("「常用」菜单不可删除。");
+                return;
+            }
             if (menuInfo.IconList != null && menuInfo.IconList.Count > 0)
             {
                 HandyControl.Controls.Growl.Ask("确认删除此菜单吗?", isConfirmed =>
@@ -604,6 +608,12 @@ namespace GeekDesk.Control.UserControls.PannelCard
 
             MenuInfo mi = (sender as ListBoxItem).DataContext as MenuInfo;
             IconInfo iconInfo = (IconInfo)e.Data.GetData(typeof(IconInfo));
+            if (mi.MenuType == MenuType.FREQUENT)
+            {
+                HandyControl.Controls.Growl.Warning("不能往「常用」中拖放快捷方式。");
+                MyPoptip.IsOpen = false;
+                return;
+            }
             if (iconInfo != null)
             {
                 // 将已有图标移动到该菜单
@@ -702,6 +712,11 @@ namespace GeekDesk.Control.UserControls.PannelCard
         {
             ListBoxItem lbi = sender as ListBoxItem;
             MenuInfo info = lbi.DataContext as MenuInfo;
+            if (info.MenuType == MenuType.FREQUENT)
+            {
+                e.Handled = true;
+                return;
+            }
 
             ItemCollection ics = lbi.ContextMenu.Items;
 
@@ -733,6 +748,16 @@ namespace GeekDesk.Control.UserControls.PannelCard
                 }
             }
 
+        }
+
+        private void FrequentMenuContextMenuOpening(object sender, ContextMenuEventArgs e)
+        {
+            ListBoxItem lbi = sender as ListBoxItem;
+            if (lbi?.DataContext is MenuInfo info && info.MenuType == MenuType.FREQUENT)
+            {
+                lbi.ContextMenu = null;
+                e.Handled = true;
+            }
         }
 
         

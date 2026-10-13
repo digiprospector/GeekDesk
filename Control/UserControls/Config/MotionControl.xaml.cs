@@ -307,6 +307,15 @@ namespace GeekDesk.Control.UserControls.Config
         }
 
 
+        private void FrequentCount_Changed(object sender, System.Windows.RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (MainWindow.appData != null)
+            {
+                FrequentStats.Refresh(MainWindow.appData);
+            }
+        }
+
+
 
         /// <summary>
         /// 鼠标中键呼出 change

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Windows.Interop;
 using System.Windows;
 using System.Windows.Media;
 
@@ -27,6 +28,33 @@ namespace GeekDesk.Util
             var w32Mouse = new Win32Point();
             GetCursorPos(ref w32Mouse);
             return new Point(w32Mouse.X, w32Mouse.Y);
+        }
+
+
+        /// <summary>
+        /// 获取鼠标坐标并转换为 WPF 逻辑坐标(DIP)
+        /// GetCursorPos 返回的是物理像素，在高 DPI 缩放下需要除以缩放比
+        /// </summary>
+        public static Point GetMousePositionDip()
+        {
+            var w32Mouse = new Win32Point();
+            GetCursorPos(ref w32Mouse);
+
+            HwndSource source = null;
+            if (Application.Current != null && Application.Current.MainWindow != null)
+            {
+                source = PresentationSource.FromVisual(Application.Current.MainWindow) as HwndSource;
+            }
+
+            double scaleX = 1.0;
+            double scaleY = 1.0;
+            if (source?.CompositionTarget != null)
+            {
+                scaleX = source.CompositionTarget.TransformToDevice.M11;
+                scaleY = source.CompositionTarget.TransformToDevice.M22;
+            }
+
+            return new Point(w32Mouse.X / scaleX, w32Mouse.Y / scaleY);
         }
 
 

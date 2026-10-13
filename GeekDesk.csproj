@@ -285,6 +285,9 @@
     <Compile Include="CustomComponent\DraggAnimatedPanel\DraggAnimatedPanel.cs" />
     <Compile Include="CustomComponent\DraggAnimatedPanel\DraggAnimatedPanel.Drag.cs" />
     <Compile Include="Converts\HideTypeConvert.cs" />
+    <Compile Include="Converts\FrequentMenuDeleteVisConvert.cs" />
+    <Compile Include="Converts\FrequentMenuColorConvert.cs" />
+    <Compile Include="Converts\FrequentMenuGeometryConvert.cs" />
     <Compile Include="Interface\IWindowCommon.cs" />
     <Compile Include="MyThread\RelativePathThread.cs" />
     <Compile Include="Plugins\EveryThing\Constant\EveryThingConst.cs" />
@@ -313,6 +316,7 @@
     <Compile Include="Util\CommonCode.cs" />
     <Compile Include="Util\FileIcon.cs" />
     <Compile Include="Util\FileUtil.cs" />
+    <Compile Include="Util\FrequentStats.cs" />
     <Compile Include="ViewModel\Temp\GuideInfoList.cs" />
     <Compile Include="Util\HideWindowUtil.cs" />
     <Compile Include="Util\IconHelper.cs" />

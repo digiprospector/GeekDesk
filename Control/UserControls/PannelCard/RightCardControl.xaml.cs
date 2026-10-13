@@ -203,6 +203,10 @@ namespace GeekDesk.Control.UserControls.PannelCard
         /// <param name="e"></param>
         private void Wrap_Drop(object sender, DragEventArgs e)
         {
+            if (MainWindow.appData.MenuList[MainWindow.appData.AppConfig.SelectedMenuIndex].MenuType == MenuType.FREQUENT)
+            {
+                return;
+            }
             Array dropObject = (System.Array)e.Data.GetData(DataFormats.FileDrop);
             if (dropObject == null) return;
             foreach (object obj in dropObject)
@@ -222,7 +226,14 @@ namespace GeekDesk.Control.UserControls.PannelCard
         /// <param name="e"></param>
         private void RemoveIcon(object sender, RoutedEventArgs e)
         {
-            appData.MenuList[appData.AppConfig.SelectedMenuIndex].IconList.Remove((IconInfo)((MenuItem)sender).Tag);
+            var currentMenu = appData.MenuList[appData.AppConfig.SelectedMenuIndex];
+            if (currentMenu.MenuType == MenuType.FREQUENT)
+            {
+                HandyControl.Controls.Growl.Warning("「常用」中的图标不能在此删除，请到所属菜单删除。");
+                return;
+            }
+            currentMenu.IconList.Remove((IconInfo)((MenuItem)sender).Tag);
+            FrequentStats.Refresh(appData);
         }
 
         private void SystemContextMenu(object sender, RoutedEventArgs e)
@@ -501,6 +512,11 @@ namespace GeekDesk.Control.UserControls.PannelCard
         /// <param name="e"></param>
         private void AddUrlIcon(object sender, RoutedEventArgs e)
         {
+            if (appData.MenuList[appData.AppConfig.SelectedMenuIndex].MenuType == MenuType.FREQUENT)
+            {
+                HandyControl.Controls.Growl.Warning("不能往「常用」中添加快捷方式。");
+                return;
+            }
             IconInfoUrlDialog urlDialog = new IconInfoUrlDialog();
             urlDialog.dialog = HandyControl.Controls.Dialog.Show(urlDialog, "MainWindowDialog");
         }
@@ -512,6 +528,11 @@ namespace GeekDesk.Control.UserControls.PannelCard
         /// <param name="e"></param>
         private void AddSystemIcon(object sender, RoutedEventArgs e)
         {
+            if (appData.MenuList[appData.AppConfig.SelectedMenuIndex].MenuType == MenuType.FREQUENT)
+            {
+                HandyControl.Controls.Growl.Warning("不能往「常用」中添加快捷方式。");
+                return;
+            }
             SystemItemWindow.Show();
         }
 

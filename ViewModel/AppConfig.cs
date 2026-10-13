@@ -70,6 +70,8 @@ namespace GeekDesk.ViewModel
         private double imgPanelWidth = (double)CommonEnum.IMAGE_PANEL_WIDTH;
         private double imgPanelHeight = (double)CommonEnum.IMAGE_PANEL_HEIGHT;
         private bool marginHide = false; //贴边隐藏
+        private double marginHideSpeed = 1; //贴边隐藏速度倍率 默认1(原速)
+        private int frequentIconCount = 10; //常用菜单显示数量
         private bool appAnimation = false; //主窗口动画效果
         private int imageWidth = (int)CommonEnum.IMAGE_WIDTH; //图片宽度
         private int imageHeight = (int)CommonEnum.IMAGE_HEIGHT; //图片高度
@@ -442,25 +444,8 @@ namespace GeekDesk.ViewModel
                 ImageHeight = value;
 
 
-                //计算 容器宽度因子
-                double i = ((double)imageWidth - (double)CommonEnum.IMAGE_WIDTH) / 5d;
-                double s = 2.44;
-                i *= 2d;
-                while (i > 1)
-                {
-                    i /= 10d;
-                }
-
-                if (i > 0d)
-                {
-                    s -= i;
-                }
-                if (s < 2.2)
-                {
-                    s = 2.2;
-                }
-                //设置容器宽度
-                ImgPanelWidth = (int)(ImageWidth * s);
+                double panelWidthFactor = (int)CommonEnum.IMAGE_PANEL_WIDTH / (double)ImageWidth;
+                ImgPanelWidth = ImageWidth * panelWidthFactor;
 
                 OnPropertyChanged("ImageWidth");
             }
@@ -485,21 +470,8 @@ namespace GeekDesk.ViewModel
             {
                 imageHeight = value;
 
-                //计算容器高度因子
-                double i = ((double)imageHeight - (double)CommonEnum.IMAGE_HEIGHT) / 5d;
-                while (i > 1)
-                {
-                    i /= 10d;
-                }
-                double s = 2.00;
-                if (i > 0d)
-                {
-                    s -= i;
-                }
-                if (s < 1.5) s = 1.5;
-
-                //设置容器高度
-                ImgPanelHeight = ImageHeight * s;
+                double panelHeightFactor = (int)CommonEnum.IMAGE_PANEL_HEIGHT / (double)ImageHeight;
+                ImgPanelHeight = ImageHeight * panelHeightFactor;
                 OnPropertyChanged("ImageHeight");
             }
         }
@@ -530,12 +502,38 @@ namespace GeekDesk.ViewModel
             }
         }
 
+        public double MarginHideSpeed
+        {
+            get
+            {
+                return marginHideSpeed;
+            }
+            set
+            {
+                marginHideSpeed = value;
+                OnPropertyChanged("MarginHideSpeed");
+            }
+        }
+
+        public int FrequentIconCount
+        {
+            get
+            {
+                return frequentIconCount;
+            }
+            set
+            {
+                frequentIconCount = value;
+                OnPropertyChanged("FrequentIconCount");
+            }
+        }
+
         public double ImgPanelWidth
         {
             get
             {
                 if (imgPanelWidth == 0d) return (double)CommonEnum.IMAGE_PANEL_WIDTH;
-                return imgPanelWidth;
+                return (double)CommonEnum.IMAGE_PANEL_WIDTH;
             }
             set
             {
@@ -549,7 +547,7 @@ namespace GeekDesk.ViewModel
             get
             {
                 if (imgPanelHeight == 0d) return (double)CommonEnum.IMAGE_PANEL_HEIGHT;
-                return imgPanelHeight;
+                return (double)CommonEnum.IMAGE_PANEL_HEIGHT;
             }
             set
             {

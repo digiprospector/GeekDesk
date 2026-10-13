@@ -306,6 +306,9 @@ namespace GeekDesk
                 appData.MenuList.Add(new MenuInfo() { MenuName = "NewMenu", MenuId = System.Guid.NewGuid().ToString(), MenuEdit = Visibility.Collapsed });
             }
 
+            appData.EnsureFrequentMenu();
+            FrequentStats.Refresh(appData);
+
             this.Width = appData.AppConfig.WindowWidth;
             this.Height = appData.AppConfig.WindowHeight;
         }

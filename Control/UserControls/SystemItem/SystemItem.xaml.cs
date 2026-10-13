@@ -20,6 +20,11 @@ namespace GeekDesk.Control.UserControls.SystemItem
             IconInfo thisInfo = (sender as StackPanel).Tag as IconInfo;
 
             MenuInfo menuInfo = MainWindow.appData.MenuList[MainWindow.appData.AppConfig.SelectedMenuIndex];
+            if (menuInfo.MenuType == MenuType.FREQUENT)
+            {
+                HandyControl.Controls.Growl.Warning("不能往「常用」中添加快捷方式。");
+                return;
+            }
 
             string startArg = thisInfo.StartArg;
             IconInfo iconInfo;

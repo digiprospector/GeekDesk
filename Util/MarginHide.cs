@@ -90,8 +90,8 @@ namespace GeekDesk.Util
             double windowTop = window.Top;
             double windowLeft = window.Left;
 
-            //获取鼠标位置
-            System.Windows.Point p = MouseUtil.GetMousePosition();
+            //获取鼠标位置(DIP)
+            System.Windows.Point p = MouseUtil.GetMousePositionDip();
             double mouseX = p.X;
             double mouseY = p.Y;
 
@@ -250,6 +250,9 @@ namespace GeekDesk.Util
                     {
                         animalTime = hideTime;
                     }
+                    double speed = MainWindow.appData.AppConfig.MarginHideSpeed;
+                    if (speed < 0.5) speed = 0.5;
+                    animalTime = (int)Math.Max(1, animalTime / speed);
                     double subLen = abs / animalTime;
                     int count = 0;
                     while (count < animalTime)

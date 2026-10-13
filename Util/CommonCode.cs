@@ -360,6 +360,7 @@ namespace GeekDesk.Util
                     List<IconInfo> list;
                     foreach (MenuInfo menuInfo in menuList)
                     {
+                        if (menuInfo.MenuType == MenuType.FREQUENT) continue;
                         list = new List<IconInfo>(menuInfo.IconList);
                         switch (MainWindow.appData.AppConfig.IconSortType)
                         {
@@ -400,8 +401,8 @@ namespace GeekDesk.Util
             double windowTop = window.Top;
             double windowLeft = window.Left;
 
-            //获取鼠标位置
-            System.Windows.Point p = MouseUtil.GetMousePosition();
+            //获取鼠标位置(DIP)
+            System.Windows.Point p = MouseUtil.GetMousePositionDip();
             double mouseX = p.X;
             double mouseY = p.Y;
 

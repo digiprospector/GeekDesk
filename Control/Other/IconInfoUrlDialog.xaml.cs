@@ -50,7 +50,14 @@ namespace GeekDesk.Control.Other
             info.Path = IconUrl.Text;
             if (newIconInfo)
             {
-                MainWindow.appData.MenuList[MainWindow.appData.AppConfig.SelectedMenuIndex].IconList.Add(info);
+                var targetMenu = MainWindow.appData.MenuList[MainWindow.appData.AppConfig.SelectedMenuIndex];
+                if (targetMenu.MenuType == MenuType.FREQUENT)
+                {
+                    HandyControl.Controls.Growl.Warning("不能往「常用」中添加快捷方式。");
+                    dialog.Close();
+                    return;
+                }
+                targetMenu.IconList.Add(info);
             }
             CommonCode.SaveAppData(MainWindow.appData, Constants.DATA_FILE_PATH);
             dialog.Close();

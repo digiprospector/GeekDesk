@@ -13,6 +13,8 @@ namespace GeekDesk.ViewModel
     public class AppData : INotifyPropertyChanged
     {
         private ObservableCollection<MenuInfo> menuList; //菜单信息及菜单对应icon信息
+        [NonSerialized]
+        private MenuInfo frequentMenu; //常用菜单（运行时构造，不持久化）
         private AppConfig appConfig = new AppConfig(); //程序设置信息
         private ObservableCollection<ToDoInfo> hiToDoList; //历史待办
         private ObservableCollection<ToDoInfo> toDoList; //未处理待办 为了提高任务效率 分开处理
@@ -67,6 +69,40 @@ namespace GeekDesk.ViewModel
             {
                 menuList = value;
                 OnPropertyChanged("MenuList");
+            }
+        }
+
+
+        public MenuInfo FrequentMenu
+        {
+            get
+            {
+                if (frequentMenu == null)
+                {
+                    frequentMenu = new MenuInfo
+                    {
+                        MenuId = "geekdesk-frequent",
+                        MenuName = "常用",
+                        MenuType = MenuType.FREQUENT,
+                    };
+                }
+                return frequentMenu;
+            }
+        }
+
+
+        public void EnsureFrequentMenu()
+        {
+            for (int i = MenuList.Count - 1; i >= 0; i--)
+            {
+                if (MenuList[i].MenuType == MenuType.FREQUENT)
+                {
+                    MenuList.RemoveAt(i);
+                }
+            }
+            if (!MenuList.Contains(FrequentMenu))
+            {
+                MenuList.Insert(0, FrequentMenu);
             }
         }
 

@@ -57,7 +57,32 @@
                           Click="MarginHide_Changed"/>
             </hc:UniformSpacingPanel>
 
-            
+            <hc:UniformSpacingPanel Spacing="10" Margin="20,5,0,0" Grid.ColumnSpan="4">
+                <TextBlock Text="隐藏速度:" VerticalAlignment="Center" Width="65"/>
+                <Slider Width="200"
+                        Minimum="0.5" Maximum="5" 
+                        TickFrequency="0.5"
+                        IsSnapToTickEnabled="True"
+                        Value="{Binding MarginHideSpeed}"
+                        VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding MarginHideSpeed, StringFormat={}{0}x}" 
+                           VerticalAlignment="Center" Width="35"/>
+            </hc:UniformSpacingPanel>
+
+            <hc:UniformSpacingPanel Spacing="10" Margin="20,5,0,0" Grid.ColumnSpan="4">
+                <TextBlock Text="常用数量:" VerticalAlignment="Center" Width="65"/>
+                <Slider Width="200"
+                        Minimum="5" Maximum="30" 
+                        TickFrequency="1"
+                        IsSnapToTickEnabled="True"
+                        Value="{Binding FrequentIconCount}"
+                        ValueChanged="FrequentCount_Changed"
+                        VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding FrequentIconCount}" 
+                           VerticalAlignment="Center" Width="35"/>
+            </hc:UniformSpacingPanel>
+
+
 
             <hc:UniformSpacingPanel Spacing="10" Margin="0,10,0,0" Grid.ColumnSpan="4">
                 <TextBlock Text="面板关闭方式" VerticalAlignment="Center"/>

@@ -142,6 +142,7 @@ namespace GeekDesk.Util
                         }
                     }
                     icon.Count++;
+                    FrequentStats.Refresh(MainWindow.appData);
 
                     //隐藏搜索框
                     //if (RunTimeStatus.SEARCH_BOX_SHOW)

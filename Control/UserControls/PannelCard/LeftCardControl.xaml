@@ -13,9 +13,14 @@
              >
     <UserControl.Resources>
 
+        <cvt:FrequentMenuDeleteVisConvert x:Key="FrequentMenuDeleteVisConvert"/>
+        <cvt:FrequentMenuColorConvert x:Key="FrequentMenuColorConvert"/>
+        <cvt:FrequentMenuGeometryConvert x:Key="FrequentMenuGeometryConvert"/>
+
         <!--左侧栏样式动画-->
         <Style x:Key="MenuStyle" TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemBaseStyle}">
             <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Padding" Value="0"/>
             <Setter Property="Margin" Value="0,0,0,1"/>
             <Setter Property="Background">
                 <Setter.Value>
@@ -31,6 +36,7 @@
             <EventSetter Event="MouseEnter" Handler="Menu_MouseEnter"/>
             <EventSetter Event="PreviewMouseLeftButtonDown" Handler="ListBoxItem_MouseDown"/>
             <EventSetter Event="PreviewMouseRightButtonDown" Handler="ListBoxItem_PreviewMouseRightButtonDown"/>
+            <EventSetter Event="ContextMenuOpening" Handler="FrequentMenuContextMenuOpening"/>
             <!--<EventSetter Event="Unselected" Handler="Lbi_Unselected"/>-->
             <Style.Triggers>
                 <MultiTrigger>
@@ -164,7 +170,8 @@
                             <MenuItem Header="加密此列表"  Click="EncryptMenu" Tag="{Binding}"/>
                             <MenuItem x:Name="AlterPW2" Header="修改密码" Click="AlterPassword"/>
                             <MenuItem Header="修改图标"  Click="EditMenuGeometry" Tag="{Binding}"/>
-                            <MenuItem Header="删除" Click="DeleteMenu" Tag="{Binding}"/>
+                            <MenuItem Header="删除" Click="DeleteMenu" Tag="{Binding}"
+                                      Visibility="{Binding MenuType, Converter={StaticResource FrequentMenuDeleteVisConvert}}"/>
                         </ContextMenu>
                     </ListBox.Resources>
 
@@ -209,17 +216,18 @@
                                 Visibility="{Binding NotMenuEdit}">
                                     <Button Background="Transparent" 
                                     BorderThickness="0"
-                                    hc:IconElement.Geometry="{Binding MenuGeometry}"
+                                    hc:IconElement.Geometry="{Binding Converter={StaticResource FrequentMenuGeometryConvert}}"
                                     hc:IconElement.Height="18"
                                     hc:IconElement.Width="18"
                                     IsEnabled="False"
                                     Opacity="1"
-                                    Foreground="{Binding GeometryColor}"
+                                    Foreground="{Binding Converter={StaticResource FrequentMenuColorConvert}}"
                                     />
                                     <TextBlock Text="{Binding MenuName}"
                                         HorizontalAlignment="Center"
                                         TextAlignment="Center"
                                         VerticalAlignment="Center"
+                                        Foreground="{Binding MenuType, Converter={StaticResource FrequentMenuColorConvert}}"
                                         />
                                 </StackPanel>
                             </StackPanel>
