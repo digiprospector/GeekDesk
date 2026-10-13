@@ -45,6 +45,45 @@ namespace GeekDesk.Util
 
         private static System.Windows.Forms.Timer timer = null;
 
+        /// <summary>
+        /// 启动时根据保存的贴边位置从屏幕内滑入到贴边隐藏位置（用于隐藏状态关闭后还原隐藏动画）
+        /// </summary>
+        public static void PlayHideAnimation(Window target)
+        {
+            window = target;
+            double screenTop = SystemParameters.VirtualScreenTop;
+            double screenLeft = SystemParameters.VirtualScreenLeft;
+            double screenWidth = SystemParameters.VirtualScreenWidth;
+            double windowHeight = target.Height;
+            double windowWidth = target.Width;
+            double windowTop = target.Top;
+            double windowLeft = target.Left;
+
+            IS_HIDE = true;
+            target.Visibility = Visibility.Visible;
+
+            double hideTop = screenTop - windowHeight + showMarginWidth;
+            double hideLeftEdge = screenLeft - windowWidth + showMarginWidth;
+            double hideRightEdge = screenWidth - Math.Abs(screenLeft) - showMarginWidth;
+
+            if (windowTop <= screenTop + 5)
+            {
+                HideAnimation(windowTop, hideTop, Window.TopProperty, HideType.TOP_HIDE);
+            }
+            else if (windowLeft <= screenLeft + 5)
+            {
+                HideAnimation(windowLeft, hideLeftEdge, Window.LeftProperty, HideType.LEFT_HIDE);
+            }
+            else if (windowLeft + windowWidth >= hideRightEdge - 5)
+            {
+                HideAnimation(windowLeft, hideRightEdge, Window.LeftProperty, HideType.RIGHT_HIDE);
+            }
+            else
+            {
+                IS_HIDE = false;
+            }
+        }
+
         public static void ReadyHide(Window window)
         {
             MarginHide.window = window;
@@ -228,18 +267,6 @@ namespace GeekDesk.Util
                 App.Current.Dispatcher.Invoke(() =>
                 {
 
-                    switch (hideType)
-                    {
-                        case HideType.LEFT_SHOW:
-                            to -= 20;
-                            break;
-                        case HideType.RIGHT_SHOW:
-                            to += 20;
-                            break;
-                        case HideType.TOP_SHOW:
-                            to -= 20;
-                            break;
-                    }
 
                     double abs = Math.Abs(Math.Abs(to) - Math.Abs(from));
 

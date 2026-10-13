@@ -1031,6 +1031,49 @@ namespace GeekDesk.ViewModel
             }
         }
 
+        private double windowLeft;
+        private double windowTop;
+        private bool windowWasMarginHidden;
+
+        public double WindowLeft
+        {
+            get
+            {
+                return windowLeft;
+            }
+            set
+            {
+                windowLeft = value;
+                OnPropertyChanged("WindowLeft");
+            }
+        }
+
+        public double WindowTop
+        {
+            get
+            {
+                return windowTop;
+            }
+            set
+            {
+                windowTop = value;
+                OnPropertyChanged("WindowTop");
+            }
+        }
+
+        public bool WindowWasMarginHidden
+        {
+            get
+            {
+                return windowWasMarginHidden;
+            }
+            set
+            {
+                windowWasMarginHidden = value;
+                OnPropertyChanged("WindowWasMarginHidden");
+            }
+        }
+
         public double WindowWidth
         {
             get

@@ -36,15 +36,27 @@
         </Style>
         <Style x:Key="MyListBoxItemStyle" TargetType="{x:Type ListBoxItem}">
             <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                        <Border>
+                        <Border Background="{TemplateBinding Background}">
                             <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource LucyIconHoverBrush}"/>
+                </Trigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{StaticResource LucyIconHoverBrush}"/>
+                </Trigger>
+            </Style.Triggers>
         </Style>
 
         <Style x:Key="SearchListBoxItemStyle" TargetType="{x:Type ListBoxItem}">
@@ -130,24 +142,16 @@
             </Grid>
         </Popup>
 
-        <hc:Card AllowDrop="True" 
+        <Grid AllowDrop="True"
                  x:Name="WrapCard"
                  Visibility="Visible"
-                 Drop="Wrap_Drop" 
-                 BorderThickness="1" 
-                 Effect="{DynamicResource EffectShadow2}" 
-                 Margin="5,0,5,5" Grid.ColumnSpan="2"
+                 Drop="Wrap_Drop"
+                 Background="{StaticResource LucyGridBrush}"
+                 Margin="0"
                  PreviewMouseRightButtonDown="WrapCard_PreviewMouseRightButtonDown"
                  hc:Dialog.Token="RightWrapCardDialog"
-                 MouseWheel="IconListBox_MouseWheel"
-                 >
-            <hc:Card.Background>
-                <SolidColorBrush Color="AliceBlue"  hc:GeometryEffect.GeometryEffect="20" Opacity="{Binding AppConfig.CardOpacity, Mode=TwoWay, Converter={StaticResource OpcityConvert}}"/>
-            </hc:Card.Background>
-            <hc:Card.BorderBrush>
-                <SolidColorBrush Color="#FFFFFFFF" Opacity="0"/>
-            </hc:Card.BorderBrush>
-            <hc:Card.ContextMenu>
+                 MouseWheel="IconListBox_MouseWheel">
+            <Grid.ContextMenu>
                 <ContextMenu Width="200">
                     <MenuItem Header="添加URL项目" Click="AddUrlIcon"/>
                     <MenuItem Header="添加系统项目" Click="AddSystemIcon"/>
@@ -155,7 +159,7 @@
                     <MenuItem x:Name="showTitle" Header="隐藏/显示标题" Click="ShowTitle_Click"/>
                     <MenuItem Header="{Binding AppConfig.IconBatch_NoWrite, Mode=OneWay, Converter={StaticResource ValueConvert}, ConverterParameter={x:Static cst:DictConst.batchMenuHeaderDict}}" Click="BatchHandle" Tag="{Binding}"/>
                 </ContextMenu>
-            </hc:Card.ContextMenu>
+            </Grid.ContextMenu>
             <hc:DialogContainer>
                 <Grid>
                     <ot:PasswordDialog xf:Animations.Primary="{xf:Animate BasedOn={StaticResource FadeInAndGrowHorizontally}, Event=Visibility, Duration=50, Delay=0}"
@@ -214,6 +218,7 @@
                                         <component:VirtualizingWrapPanel VirtualizationMode="Recycling"  
                                                                     IsVirtualizing="True" 
                                                                     IsContainerVirtualizable="True"
+                                                                    SpacingMode="None"
                                                                     VirtualizingPanel.ScrollUnit="Pixel"
                                                 Width="{Binding AppConfig.WindowWidth, Mode=OneWay, 
                                                 Converter={StaticResource GetWidthByWWConvert}, 
@@ -277,7 +282,7 @@
                                                     TextTrimming="WordEllipsis"
                                                     TextAlignment="Center" 
                                                     VerticalAlignment="Center" 
-                                                    Foreground="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type Window}},Path=DataContext.AppConfig.TextColor}"
+                                                    Foreground="{StaticResource LucyIconTextBrush}"
                                                     Visibility="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type Window}},Path=DataContext.AppConfig.ShowIconTitle, Converter={StaticResource MyBoolean2VisibilityConverter}, ConverterParameter={x:Static Visibility.Collapsed}, Mode=TwoWay}"
                                                     Text="{Binding Name}"/>
                                             <!--</StackPanel>-->
@@ -292,25 +297,16 @@
 
                 </Grid>
             </hc:DialogContainer>
-        </hc:Card>
+        </Grid>
 
 
-        <hc:Card x:Name="VerticalCard"
+        <Grid x:Name="VerticalCard"
                  Visibility="Collapsed"
-                 BorderThickness="1" 
-                 Effect="{DynamicResource EffectShadow2}" 
-                 Margin="5,0,5,5" Grid.ColumnSpan="2"
-                 MouseLeftButtonDown="VerticalCard_MouseLeftButtonDown"
-                >
-            <hc:Card.Background>
-                    <SolidColorBrush Color="AliceBlue" 
-                                 hc:GeometryEffect.GeometryEffect="20"
-                                 Opacity="{Binding AppConfig.CardOpacity, Mode=TwoWay, Converter={StaticResource OpcityConvert}}"/>
-                </hc:Card.Background>
-                <hc:Card.BorderBrush>
-                    <SolidColorBrush Color="#FFFFFFFF" Opacity="0"/>
-                </hc:Card.BorderBrush>
-            </hc:Card>
+                 Background="{StaticResource LucyGridBrush}"
+                 Margin="0"
+                 MouseLeftButtonDown="VerticalCard_MouseLeftButtonDown">
+            <ContentControl x:Name="VerticalCardContent"/>
+        </Grid>
             <hc:LoadingCircle x:Name="Loading_RightCard" 
                               Width="45" Height="45" 
                               DotBorderBrush="White"

@@ -12,8 +12,8 @@ namespace GeekDesk.Constant
         IMAGE_HEIGHT = 45, //默认图标高度
         IMAGE_WIDTH_AM = 52, //动画变换宽度
         IMAGE_HEIGHT_AM = 52, //动画变换高度
-        IMAGE_PANEL_WIDTH = 55, //图标容器宽度
-        IMAGE_PANEL_HEIGHT = 70, //图标容器高度
+        IMAGE_PANEL_WIDTH = 68, //图标容器宽度
+        IMAGE_PANEL_HEIGHT = 88, //图标容器高度
         WINDOW_ANIMATION_TIME = 200, //主窗口动画时间,
     }
 }

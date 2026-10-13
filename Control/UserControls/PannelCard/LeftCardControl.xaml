@@ -17,78 +17,52 @@
         <cvt:FrequentMenuColorConvert x:Key="FrequentMenuColorConvert"/>
         <cvt:FrequentMenuGeometryConvert x:Key="FrequentMenuGeometryConvert"/>
 
-        <!--左侧栏样式动画-->
-        <Style x:Key="MenuStyle" TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemBaseStyle}">
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="Padding" Value="0"/>
-            <Setter Property="Margin" Value="0,0,0,1"/>
-            <Setter Property="Background">
+        <!--左侧栏样式 深色扁平 Tab-->
+        <Style x:Key="MenuStyle" TargetType="ListBoxItem">
+            <Setter Property="FontSize" Value="17"/>
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Padding" Value="16,0,0,0"/>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="AllowDrop" Value="True"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Template">
                 <Setter.Value>
-                    <SolidColorBrush Color="Black" Opacity="0.01"/>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                Padding="{TemplateBinding Padding}"
+                                SnapsToDevicePixels="True">
+                            <ContentPresenter VerticalAlignment="Center"
+                                              HorizontalAlignment="Left"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                        </Border>
+                    </ControlTemplate>
                 </Setter.Value>
             </Setter>
-            <Setter Property="AllowDrop" Value="True"/>
             <EventSetter Event="Drop" Handler="Menu_Drop"/>
             <EventSetter Event="PreviewDragEnter" Handler="Menu_PreviewDragEnter"/>
             <EventSetter Event="PreviewDragLeave" Handler="Menu_PreviewDragLeave"/>
             <EventSetter Event="MouseLeave" Handler="Menu_MouseLeave"/>
-            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             <EventSetter Event="MouseEnter" Handler="Menu_MouseEnter"/>
             <EventSetter Event="PreviewMouseLeftButtonDown" Handler="ListBoxItem_MouseDown"/>
             <EventSetter Event="PreviewMouseRightButtonDown" Handler="ListBoxItem_PreviewMouseRightButtonDown"/>
             <EventSetter Event="ContextMenuOpening" Handler="FrequentMenuContextMenuOpening"/>
-            <!--<EventSetter Event="Unselected" Handler="Lbi_Unselected"/>-->
             <Style.Triggers>
-                <MultiTrigger>
-                    <MultiTrigger.Conditions>
-                        <Condition Property="IsMouseOver" Value="False"/>
-                        <Condition Property="IsSelected" Value="False"/>
-                    </MultiTrigger.Conditions>
-                    <MultiTrigger.EnterActions>
-                        <BeginStoryboard>
-                            <Storyboard Timeline.DesiredFrameRate="60">
-                                <DoubleAnimation To="16" Duration="0:0:0.2" Storyboard.TargetProperty="FontSize"/>
-                            </Storyboard>
-                        </BeginStoryboard>
-                    </MultiTrigger.EnterActions>
-                    <MultiTrigger.ExitActions>
-                        <BeginStoryboard>
-                            <Storyboard Timeline.DesiredFrameRate="60">
-                                <DoubleAnimation To="18" Duration="0:0:0.001" Storyboard.TargetProperty="FontSize"/>
-                            </Storyboard>
-                        </BeginStoryboard>
-                    </MultiTrigger.ExitActions>
-                    <MultiTrigger.Setters>
-                        <Setter Property="Background">
-                            <Setter.Value>
-                                <SolidColorBrush Color="Black" Opacity="0.01"/>
-                            </Setter.Value>
-                        </Setter>
-                        <Setter Property="Foreground" Value="Black"/>
-                    </MultiTrigger.Setters>
-                </MultiTrigger>
-
-
-                <!--移到代码设置-->
-                <!--<Trigger Property="IsSelected" Value="False">
-                    <Setter Property="Background" Value="Transparent"/>
-                    <Setter Property="Foreground" Value="Black"/>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource LucyMenuHoverBrush}"/>
                 </Trigger>
                 <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="Background" Value="#ECECEC"/>
-                    <Setter Property="Foreground" Value="Black"/>
+                    <Setter Property="Background" Value="{StaticResource LucyMenuSelectedBrush}"/>
+                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="BorderThickness" Value="3,0,0,0"/>
+                    <Setter Property="BorderBrush" Value="{StaticResource LucyMenuSelectedBarBrush}"/>
+                    <Setter Property="Padding" Value="13,0,0,0"/>
                 </Trigger>
-                
-                <Trigger Property="IsMouseOver" Value="False">
-                    <Setter Property="Background" Value="Transparent"/>
-                    <Setter Property="Foreground" Value="Black"/>
-                </Trigger>-->
-                <Trigger Property="IsMouseOver" Value="False">
-                    <Setter Property="Background" Value="#00FFFFFF"/>
-                    <Setter Property="Foreground" Value="Black"/>
-                </Trigger>
-
-
             </Style.Triggers>
         </Style>
         <Style x:Key="MyPoptipStyle" TargetType="Border">
@@ -114,7 +88,7 @@
         <cvt:OpcityConvert x:Key="OpcityConvert"/>
         <cvt:StringAppendConvert x:Key="StringAppendConvert"/>
     </UserControl.Resources>
-    <Grid Background="Transparent">
+    <Grid>
         <Popup Name="MyPoptip" FlowDirection="LeftToRight" 
                PopupAnimation="None" Placement="Mouse" IsOpen="False"
                AllowsTransparency="True"
@@ -127,32 +101,24 @@
         </Popup>
 
         <!--左侧栏-->
-        <hc:Card x:Name="MyCard"
-                 BorderThickness="1"
-                 Effect="{DynamicResource EffectShadow2}" 
-                 Margin="5,0,0,5"
+        <Border x:Name="MyCard"
+                 Margin="0"
+                 Background="{StaticResource LucyPanelBrush}"
+                 BorderThickness="0,0,1,0"
+                 BorderBrush="{StaticResource LucyBorderBrush}"
                  MouseDown="MyCard_MouseDown"
-                 PreviewMouseRightButtonDown="MyCard_PreviewMouseRightButtonDown"
-                 >
-            <hc:Card.Background>
-                <SolidColorBrush Color="#FFFFFFFF" hc:GeometryEffect.GeometryEffect="20" Opacity="{Binding AppConfig.CardOpacity, Mode=TwoWay, Converter={StaticResource OpcityConvert}}">
-
-                </SolidColorBrush>
-            </hc:Card.Background>
-            <hc:Card.BorderBrush>
-                <SolidColorBrush Color="#FFFFFFFF" Opacity="0"/>
-            </hc:Card.BorderBrush>
-            <hc:Card.ContextMenu>
+                 PreviewMouseRightButtonDown="MyCard_PreviewMouseRightButtonDown">
+            <Border.ContextMenu>
                 <ContextMenu Width="200">
                     <MenuItem Header="新建菜单" Click="CreateMenu"/>
                     <MenuItem Header="新建关联菜单" Click="CreateLinkMenu"/>
                     <MenuItem x:Name="AlterPW1" Header="修改密码" Click="AlterPassword"/>
                 </ContextMenu>
-            </hc:Card.ContextMenu>
+            </Border.ContextMenu>
 
             <WrapPanel Orientation="Horizontal">
                 <ListBox x:Name="MenuListBox"
-                         Padding="2,3,0,2"
+                         Padding="4,6,4,6"
                          ItemsSource="{Binding MenuList}"
                          Tag="{Binding AppConfig.MenuCardWidth}"
                          BorderThickness="0" Foreground="{x:Null}"
@@ -181,12 +147,12 @@
                         </Style>
                     </ListBox.ItemContainerStyle>
                     <ListBox.Background>
-                        <SolidColorBrush Color="AliceBlue" Opacity="0"/>
+                        <SolidColorBrush Color="Transparent"/>
                     </ListBox.Background>
 
                     <ListBox.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <DraggAnimatedPanel:DraggAnimatedPanel ItemsHeight="33" ItemsWidth="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListBox},AncestorLevel=1},Path=Tag, Mode=TwoWay, Converter={StaticResource MenuWidthConvert}, ConverterParameter=10}"   HorizontalAlignment="Center" VerticalAlignment="Top" SwapCommand="{Binding SwapCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"/>
+                            <DraggAnimatedPanel:DraggAnimatedPanel ItemsHeight="42" ItemsWidth="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListBox},AncestorLevel=1},Path=Tag, Mode=TwoWay, Converter={StaticResource MenuWidthConvert}, ConverterParameter=0}"   HorizontalAlignment="Left" VerticalAlignment="Top" SwapCommand="{Binding SwapCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"/>
                         </ItemsPanelTemplate>
                     </ListBox.ItemsPanel>
 
@@ -208,33 +174,24 @@
                                 IsVisibleChanged="MenuEditWhenVisibilityChanged"
                                 Visibility="{Binding MenuEdit}">
                                     <TextBox.Background>
-                                        <SolidColorBrush Color="White" Opacity="0.6" />
+                                        <SolidColorBrush Color="#3D3D3D"/>
                                     </TextBox.Background>
                                 </TextBox>
                                 <StackPanel Orientation="Horizontal"
                                 IsVisibleChanged="MenuWhenVisibilityChanged"
                                 Visibility="{Binding NotMenuEdit}">
-                                    <Button Background="Transparent" 
-                                    BorderThickness="0"
-                                    hc:IconElement.Geometry="{Binding Converter={StaticResource FrequentMenuGeometryConvert}}"
-                                    hc:IconElement.Height="18"
-                                    hc:IconElement.Width="18"
-                                    IsEnabled="False"
-                                    Opacity="1"
-                                    Foreground="{Binding Converter={StaticResource FrequentMenuColorConvert}}"
-                                    />
                                     <TextBlock Text="{Binding MenuName}"
-                                        HorizontalAlignment="Center"
-                                        TextAlignment="Center"
+                                        HorizontalAlignment="Left"
+                                        TextAlignment="Left"
                                         VerticalAlignment="Center"
-                                        Foreground="{Binding MenuType, Converter={StaticResource FrequentMenuColorConvert}}"
-                                        />
+                                        Foreground="White"
+                                        FontSize="17"/>
                                 </StackPanel>
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
             </WrapPanel>
-        </hc:Card>
+        </Border>
     </Grid>
 </UserControl>

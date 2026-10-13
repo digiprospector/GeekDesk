@@ -64,7 +64,7 @@ namespace GeekDesk.Control.UserControls.PannelCard
         {
             lbi.MouseEnter += (s, me) =>
             {
-                lbi.Background = bac;
+                //样式由XAML控制
             };
             lbi.Unselected += Lbi_Unselected;
 
@@ -159,32 +159,17 @@ namespace GeekDesk.Control.UserControls.PannelCard
 
         private void Lbi_Unselected(object sender, RoutedEventArgs e)
         {
-            //添加Leave效果
-            ListBoxItem lbi = sender as ListBoxItem;
-            lbi.Background = Brushes.Transparent;
-            lbi.MouseLeave += Lbi_MouseLeave;
+            //样式由XAML控制
         }
 
         private void Lbi_Selected(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                ListBoxItem lbi = sender as ListBoxItem;
-
-                SolidColorBrush fontColor = new SolidColorBrush(Colors.Black);
-
-                lbi.MouseLeave -= Lbi_MouseLeave;
-                lbi.Background = bac;
-                lbi.Foreground = fontColor;
-            }
-            catch { }
-
+            //样式由XAML控制
         }
 
         private void Lbi_MouseLeave(object sender, MouseEventArgs e)
         {
-            ListBoxItem lbi = sender as ListBoxItem;
-            lbi.Background = Brushes.Transparent;
+            //样式由XAML控制
         }
         #endregion
 

@@ -2,6 +2,20 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:hc="https://handyorg.github.io/handycontrol">
 
+    <!--Lucy 深色扁平主题资源-->
+    <SolidColorBrush x:Key="LucyWindowBrush" Color="#2B2B2B"/>
+    <SolidColorBrush x:Key="LucyTopBarBrush" Color="#2B2B2B"/>
+    <SolidColorBrush x:Key="LucyPanelBrush" Color="#2B2B2B"/>
+    <SolidColorBrush x:Key="LucyGridBrush" Color="#1F1F1F"/>
+    <SolidColorBrush x:Key="LucyBorderBrush" Color="#383838"/>
+    <SolidColorBrush x:Key="LucyLogoBrush" Color="#4AA3FF"/>
+    <SolidColorBrush x:Key="LucySubTextBrush" Color="#9C9C9C"/>
+    <SolidColorBrush x:Key="LucyMenuTextBrush" Color="#C9C9C9"/>
+    <SolidColorBrush x:Key="LucyMenuHoverBrush" Color="#333333"/>
+    <SolidColorBrush x:Key="LucyMenuSelectedBrush" Color="#3D3D3D"/>
+    <SolidColorBrush x:Key="LucyMenuSelectedBarBrush" Color="#2196F3"/>
+    <SolidColorBrush x:Key="LucyIconHoverBrush" Color="#3A3A3A"/>
+    <SolidColorBrush x:Key="LucyIconTextBrush" Color="#E6E6E6"/>
 
     <!--整体样式-->
     <Style x:Key="BorderBG" TargetType="Border">

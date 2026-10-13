@@ -158,7 +158,7 @@ namespace GeekDesk
                     SearchResContainer.Visibility = Visibility.Collapsed;
                     //显示加载条
                     RightCard.Loading_RightCard.Visibility = Visibility.Visible;
-                    object obj = RightCard.VerticalCard.Content;
+                    object obj = RightCard.VerticalCardContent.Content;
                     if (obj != null)
                     {
                         SearchResControl control = obj as SearchResControl;
@@ -171,7 +171,7 @@ namespace GeekDesk
                 //隐藏条目信息
                 SearchResContainer.Visibility = Visibility.Collapsed;
                 //清空查询结果
-                object obj = RightCard.VerticalCard.Content;
+                object obj = RightCard.VerticalCardContent.Content;
                 if (obj != null)
                 {
                     SearchResControl control = obj as SearchResControl;
@@ -244,7 +244,7 @@ namespace GeekDesk
                                 SearchResContainer.Visibility = Visibility.Visible;
                             }
                             SearchResControl control = new SearchResControl(resList);
-                            RightCard.VerticalCard.Content = control;
+                            RightCard.VerticalCardContent.Content = control;
                             //关闭加载效果
                             RightCard.Loading_RightCard.Visibility = Visibility.Collapsed;
                         });
@@ -283,7 +283,7 @@ namespace GeekDesk
                     SearchBox.TextChanged += SearchBox_TextChanged;
                     SearchBox.Width = 0;
                     SearchResContainer.Visibility = Visibility.Collapsed;
-                    RightCard.VerticalCard.Content = null;
+                    RightCard.VerticalCardContent.Content = null;
                     RightCard.VisibilitySearchCard(Visibility.Collapsed);
                 });
             }).Start();
@@ -311,6 +311,12 @@ namespace GeekDesk
 
             this.Width = appData.AppConfig.WindowWidth;
             this.Height = appData.AppConfig.WindowHeight;
+            if (appData.AppConfig.WindowLeft != 0 || appData.AppConfig.WindowTop != 0)
+            {
+                this.WindowStartupLocation = WindowStartupLocation.Manual;
+                this.Left = appData.AppConfig.WindowLeft;
+                this.Top = appData.AppConfig.WindowTop;
+            }
         }
 
         /// <summary>
@@ -320,14 +326,43 @@ namespace GeekDesk
         /// <param name="e"></param>
         void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            UpdateTopBarDate();
+            var topBarTimer = new System.Windows.Threading.DispatcherTimer
+            {
+                Interval = TimeSpan.FromMinutes(1)
+            };
+            topBarTimer.Tick += (s, args) => UpdateTopBarDate();
+            topBarTimer.Start();
+
             BGSettingUtil.BGSetting();
             if (!appData.AppConfig.StartedShowPanel)
             {
                 this.Visibility = Visibility.Collapsed;
             }
+            else if (appData.AppConfig.WindowWasMarginHidden)
+            {
+                appData.AppConfig.WindowWasMarginHidden = false;
+                this.Show();
+                MarginHide.PlayHideAnimation(this);
+            }
             else
             {
-                ShowApp();
+                restorePositionThisLaunch = appData.AppConfig.WindowWasMarginHidden == false
+                    && (appData.AppConfig.WindowLeft != 0 || appData.AppConfig.WindowTop != 0);
+                bool followMouseBackup = appData.AppConfig.FollowMouse;
+                if (restorePositionThisLaunch)
+                {
+                    appData.AppConfig.FollowMouse = false;
+                }
+                try
+                {
+                    ShowApp();
+                }
+                finally
+                {
+                    appData.AppConfig.FollowMouse = followMouseBackup;
+                    restorePositionThisLaunch = false;
+                }
             }
             //给任务栏图标一个名字
             BarIcon.Text = Constants.MY_NAME;
@@ -561,6 +596,32 @@ namespace GeekDesk
         private void CloseButtonClick(object sender, RoutedEventArgs e)
         {
             HideApp();
+        }
+
+        private void SearchButtonClick(object sender, RoutedEventArgs e)
+        {
+            ShowSearchBox();
+        }
+
+        private void UpdateTopBarDate()
+        {
+            var now = DateTime.Now;
+            string dateText = $"{now.Month}月{now.Day}日 {GetChineseWeekDay(now)}";
+            TopBarDateText.Text = dateText;
+        }
+
+        private static string GetChineseWeekDay(DateTime dateTime)
+        {
+            switch (dateTime.DayOfWeek)
+            {
+                case DayOfWeek.Monday: return "星期一";
+                case DayOfWeek.Tuesday: return "星期二";
+                case DayOfWeek.Wednesday: return "星期三";
+                case DayOfWeek.Thursday: return "星期四";
+                case DayOfWeek.Friday: return "星期五";
+                case DayOfWeek.Saturday: return "星期六";
+                default: return "星期日";
+            }
         }
 
 
@@ -842,6 +903,16 @@ namespace GeekDesk
             }
         }
 
+        private void Window_LocationChanged(object sender, EventArgs e)
+        {
+            if (this.DataContext == null || Visibility != Visibility.Visible) return;
+            AppData appData = this.DataContext as AppData;
+            if (MarginHide.IS_HIDE) return;
+            appData.AppConfig.WindowLeft = this.Left;
+            appData.AppConfig.WindowTop = this.Top;
+            appData.AppConfig.WindowWasMarginHidden = false;
+        }
+
 
 
         /// <summary>
@@ -858,6 +929,10 @@ namespace GeekDesk
             if (appData.AppConfig.EnableEveryThing == true)
             {
                 EveryThingUtil.DisableEveryThing();
+            }
+            if (MarginHide.IS_HIDE)
+            {
+                appData.AppConfig.WindowWasMarginHidden = true;
             }
             Application.Current.Shutdown();
         }
@@ -899,17 +974,17 @@ namespace GeekDesk
             {
                 if (e.Key == Key.Down || e.Key == Key.Tab)
                 {
-                    SearchResControl res = RightCard.VerticalCard.Content as SearchResControl;
+                    SearchResControl res = RightCard.VerticalCardContent.Content as SearchResControl;
                     res.SearchListBoxIndexAdd();
                 }
                 else if (e.Key == Key.Up)
                 {
-                    SearchResControl res = RightCard.VerticalCard.Content as SearchResControl;
+                    SearchResControl res = RightCard.VerticalCardContent.Content as SearchResControl;
                     res.SearchListBoxIndexSub();
                 }
                 else if (e.Key == Key.Enter)
                 {
-                    SearchResControl res = RightCard.VerticalCard.Content as SearchResControl;
+                    SearchResControl res = RightCard.VerticalCardContent.Content as SearchResControl;
                     res.StartupSelectionItem();
                 }
             }
@@ -1053,6 +1128,7 @@ namespace GeekDesk
 
         private int guideIndex = 0;
         private bool guideRun = false;
+        private bool restorePositionThisLaunch = false;
         private void Guide()
         {
             try
