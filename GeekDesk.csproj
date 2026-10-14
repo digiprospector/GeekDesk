@@ -647,8 +647,8 @@
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>; Move all assemblies and related files to lib folder
-ROBOCOPY "$(TargetDir) " "$(TargetDir)lib\ " /XF Data *.exe *.config *.manifest /XD "$(TargetDir)lib" plugins logs bak /E /IS /MOVE
-ROBOCOPY "$(TargetDir) " "$(TargetDir)lib\ " *.dll /XD "$(TargetDir)lib"  /E /S /MOVE
-if %25errorlevel%25 leq 4 exit 0 else exit %25errorlevel%25</PostBuildEvent>
+ROBOCOPY "$(TargetDir) " "$(TargetDir)lib\ " /XF Data *.exe *.config *.manifest /XD "$(TargetDir)lib" plugins logs bak /E /IS
+ROBOCOPY "$(TargetDir) " "$(TargetDir)lib\ " *.dll /XD "$(TargetDir)lib"  /E /S
+exit 0</PostBuildEvent>
   </PropertyGroup>
 </Project>
