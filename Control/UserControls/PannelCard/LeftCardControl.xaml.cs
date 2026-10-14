@@ -140,11 +140,6 @@ namespace GeekDesk.Control.UserControls.PannelCard
             }
             else
             {
-                lbi.MouseEnter += (s, me) =>
-                {
-                    lbi.Background = bac;
-                };
-
                 lbi.MouseLeave += Lbi_MouseLeave;
                 lbi.Selected += Lbi_Selected;
             }
@@ -153,8 +148,7 @@ namespace GeekDesk.Control.UserControls.PannelCard
         #region 设置菜单触发事件
         private void Lbi_MouseEnter(object sender, MouseEventArgs e)
         {
-            ListBoxItem lbi = sender as ListBoxItem;
-            lbi.Background = Brushes.Transparent;
+            //样式由XAML控制
         }
 
         private void Lbi_Unselected(object sender, RoutedEventArgs e)
