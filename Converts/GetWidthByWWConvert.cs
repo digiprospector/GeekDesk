@@ -40,7 +40,7 @@ namespace GeekDesk.Converts
             }
             else if (WidthTypeEnum.RIGHT_CARD_70 == type)
             {
-                return (config.WindowWidth - config.MenuCardWidth) - 70;
+                return (config.WindowWidth - config.MenuCardWidth) - 10;
             }
 
             return config.WindowWidth;
