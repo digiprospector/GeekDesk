@@ -115,18 +115,25 @@ namespace GeekDesk.Util
                             FileSystemInfo[] fileInfos = dirInfo.GetFileSystemInfos();
 
                             ObservableCollection<IconInfo> iconList = new ObservableCollection<IconInfo>();
+                            Dictionary<string, IconInfo> oldIconMap = menuInfo.IconList == null
+                                ? new Dictionary<string, IconInfo>()
+                                : menuInfo.IconList
+                                    .Where(icon => !string.IsNullOrEmpty(icon.Path))
+                                    .GroupBy(icon => icon.Path)
+                                    .ToDictionary(group => group.Key, group => group.First());
                             foreach (FileSystemInfo fileInfo in fileInfos)
                             {
                                 IconInfo iconInfo = CommonCode.GetIconInfoByPath_NoWrite(fileInfo.FullName);
+                                if (oldIconMap.TryGetValue(iconInfo.Path, out IconInfo oldIconInfo))
+                                {
+                                    iconInfo.Count = oldIconInfo.Count;
+                                }
                                 iconList.Add(iconInfo);
                             }
                             App.Current.Dispatcher.Invoke(() =>
                             {
-                                foreach (IconInfo iconInfo in iconList)
-                                {
-                                    menuInfo.IconList = null;
-                                    menuInfo.IconList = iconList;
-                                }
+                                menuInfo.IconList = null;
+                                menuInfo.IconList = iconList;
                             });
                         }
                     }

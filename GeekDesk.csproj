@@ -558,7 +558,7 @@
     <Resource Include="Resource\Image\About.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Taskbar.ico" />
+    <Resource Include="Taskbar.ico" /><Resource Include="rocket.png" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="IWshRuntimeLibrary">
