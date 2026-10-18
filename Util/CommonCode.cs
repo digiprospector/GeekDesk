@@ -1,4 +1,4 @@
-using GeekDesk.Constant;
+﻿using GeekDesk.Constant;
 using GeekDesk.Control.Other;
 using GeekDesk.ViewModel;
 using HandyControl.Data;
@@ -203,9 +203,8 @@ namespace GeekDesk.Util
         /// 保存app 数据
         /// </summary>
         /// <param name="appData"></param>
-        public static void SaveAppData(AppData appData, string filePath, bool forceSave = false)
+        public static void SaveAppData(AppData appData, string filePath)
         {
-            if (forceSave) SuppressDataSave = false;
             if (SuppressDataSave || IsStartupInitializing)
             {
                 return;
