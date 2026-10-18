@@ -25,10 +25,6 @@ namespace GeekDesk.Util
 {
     class CommonCode
     {
-        public static bool SuppressDataSave = false;
-
-        public static bool IsStartupInitializing = false;
-
         public static bool HasOpenMenuOrDialog()
         {
             Window window = MainWindow.mainWindow;
@@ -205,10 +201,6 @@ namespace GeekDesk.Util
         /// <param name="appData"></param>
         public static void SaveAppData(AppData appData, string filePath)
         {
-            if (SuppressDataSave || IsStartupInitializing)
-            {
-                return;
-            }
             lock (_MyLock)
             {
                 //if (filePath.Equals(Constants.DATA_FILE_BAK_PATH))
@@ -378,6 +370,15 @@ namespace GeekDesk.Util
         {
             string tempPath = path;
 
+            if (".bat".Equals(System.IO.Path.GetExtension(path), StringComparison.OrdinalIgnoreCase))
+            {
+                string batInfo = "path: " + path +
+                    ", exists: " + File.Exists(path) +
+                    ", attributes: " + (File.Exists(path) ? File.GetAttributes(path).ToString() : "N/A") +
+                    ", size: " + (File.Exists(path) ? new FileInfo(path).Length.ToString() : "N/A");
+                LogUtil.WriteLog("GetIconInfoByPath_NoWrite (.bat) - " + batInfo);
+            }
+
             //string base64 = ImageUtil.FileImageToBase64(path, System.Drawing.Imaging.ImageFormat.Png);
             string ext = "";
             if (!ImageUtil.IsSystemItem(path))
@@ -402,6 +403,10 @@ namespace GeekDesk.Util
             }
 
             BitmapImage bi = ImageUtil.GetBitmapIconByPath(iconPath);
+            if (".bat".Equals(System.IO.Path.GetExtension(tempPath), StringComparison.OrdinalIgnoreCase))
+            {
+                LogUtil.WriteLog("GetIconInfoByPath_NoWrite (.bat) - iconPath: " + iconPath + ", icon extracted: " + (bi != null));
+            }
             IconInfo iconInfo = new IconInfo
             {
                 Path_NoWrite = path,
