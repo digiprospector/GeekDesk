@@ -28,8 +28,6 @@ namespace GeekDesk.Util
         private static readonly int hideTime = 65;
         private static readonly int showTime = 15;
 
-        private static int animalTime;
-
         private static readonly int fadeHideTime = 50;
         private static readonly int fadeShowTime = 50;
         private static readonly int taskTime = 200;
@@ -116,7 +114,13 @@ namespace GeekDesk.Util
         #region 窗体贴边隐藏功能
         private static void HideWindow(object o, EventArgs e)
         {
-            if (RunTimeStatus.MARGIN_HIDE_AND_OTHER_SHOW 
+            if (RunTimeStatus.APP_MENU_OR_DIALOG_SHOW && !CommonCode.HasOpenMenuOrDialog())
+            {
+                RunTimeStatus.APP_MENU_OR_DIALOG_SHOW = false;
+            }
+
+            if (RunTimeStatus.MARGIN_HIDE_AND_OTHER_SHOW
+                || RunTimeStatus.APP_MENU_OR_DIALOG_SHOW
                 || RunTimeStatus.LOCK_APP_PANEL) return;
 
             double screenLeft = SystemParameters.VirtualScreenLeft;
@@ -259,77 +263,45 @@ namespace GeekDesk.Util
         }
 
 
-        private static void HideAnimation(double from, double to, DependencyProperty property, HideType hideType)
+    private static void HideAnimation(double from, double to, DependencyProperty property, HideType hideType)
+    {
+        double duration = hideType <= HideType.RIGHT_SHOW ? showTime : hideTime;
+        double speed = MainWindow.appData.AppConfig.MarginHideSpeed;
+        if (speed < 0.5) speed = 0.5;
+        duration = Math.Max(1, duration / speed);
+
+        App.Current.Dispatcher.Invoke(() =>
         {
-
-            new Thread(() =>
+            DoubleAnimation animation = new DoubleAnimation
             {
-                App.Current.Dispatcher.Invoke(() =>
+                From = from,
+                To = to,
+                Duration = new Duration(TimeSpan.FromMilliseconds(duration)),
+                EasingFunction = new QuadraticEase
                 {
-
-
-                    double abs = Math.Abs(Math.Abs(to) - Math.Abs(from));
-
-                    if (hideType <= HideType.RIGHT_SHOW)
-                    {
-                        animalTime = showTime;                        
-                    } else
-                    {
-                        animalTime = hideTime;
-                    }
-                    double speed = MainWindow.appData.AppConfig.MarginHideSpeed;
-                    if (speed < 0.5) speed = 0.5;
-                    animalTime = (int)Math.Max(1, animalTime / speed);
-                    double subLen = abs / animalTime;
-                    int count = 0;
-                    while (count < animalTime)
-                    {
-                        switch (hideType)
-                        {
-                            case HideType.LEFT_HIDE:
-                                window.Left -= subLen;
-                                break;
-                            case HideType.LEFT_SHOW:
-                                window.Left += subLen;
-                                break;
-                            case HideType.RIGHT_HIDE:
-                                window.Left += subLen;
-                                break;
-                            case HideType.RIGHT_SHOW:
-                                window.Left -= subLen;
-                                break;
-                            case HideType.TOP_HIDE:
-                                window.Top -= subLen;
-                                break;
-                            case HideType.TOP_SHOW:
-                                window.Top += subLen;
-                                break;
-                        }
-                        count++;
-                        Thread.Sleep(1);
-                    }
-
-                    switch (hideType)
-                    {
-                        case HideType.TOP_HIDE:
-                            window.Top = to;
-                            break;
-                        case HideType.TOP_SHOW:
-                            window.Top = to;
-                            break;
-                        default:
-                        window.Left = to;
-                        break;
-                    }
-                    if (hideType > HideType.RIGHT_SHOW)
-                    {
-                        window.Visibility = Visibility.Collapsed;
-                    }
-                });
-            }).Start();
-            
-            
-        }
+                    EasingMode = hideType <= HideType.RIGHT_SHOW ? EasingMode.EaseOut : EasingMode.EaseIn
+                }
+            };
+            Timeline.SetDesiredFrameRate(animation, 120);
+            animation.Completed += (sender, e) =>
+            {
+                window.BeginAnimation(property, null);
+                if (property == Window.LeftProperty)
+                {
+                    window.Left = to;
+                }
+                else
+                {
+                    window.Top = to;
+                }
+                if (hideType > HideType.RIGHT_SHOW)
+                {
+                    window.Visibility = Visibility.Collapsed;
+                }
+            };
+            window.BeginAnimation(property, animation);
+        });
+    }
 
         private static void FadeAnimation(double from, double to)
         {

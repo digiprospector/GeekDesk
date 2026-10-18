@@ -39,7 +39,6 @@ namespace GeekDesk.Control.UserControls.PannelCard
         {
             InitializeComponent();
             this.Loaded += RightCardControl_Loaded;
-
         }
 
         private void RightCardControl_Loaded(object sender, RoutedEventArgs e)
@@ -238,6 +237,7 @@ namespace GeekDesk.Control.UserControls.PannelCard
 
         private void SystemContextMenu(object sender, RoutedEventArgs e)
         {
+            RunTimeStatus.APP_MENU_OR_DIALOG_SHOW = true;
             IconInfo icon = (IconInfo)((MenuItem)sender).Tag;
             DirectoryInfo[] folders = new DirectoryInfo[1];
             folders[0] = new DirectoryInfo(icon.Path);
@@ -246,6 +246,7 @@ namespace GeekDesk.Control.UserControls.PannelCard
             p.X -= 80;
             p.Y -= 80;
             scm.ShowContextMenu(folders, p);
+            RunTimeStatus.APP_MENU_OR_DIALOG_SHOW = false;
         }
 
         /// <summary>
@@ -255,6 +256,7 @@ namespace GeekDesk.Control.UserControls.PannelCard
         /// <param name="e"></param>
         private void PropertyConfig(object sender, RoutedEventArgs e)
         {
+            RunTimeStatus.APP_MENU_OR_DIALOG_SHOW = true;
             IconInfo info = (IconInfo)((MenuItem)sender).Tag;
             switch (info.IconType)
             {
@@ -517,6 +519,7 @@ namespace GeekDesk.Control.UserControls.PannelCard
                 HandyControl.Controls.Growl.Warning("不能往「常用」中添加快捷方式。");
                 return;
             }
+            RunTimeStatus.APP_MENU_OR_DIALOG_SHOW = true;
             IconInfoUrlDialog urlDialog = new IconInfoUrlDialog();
             urlDialog.dialog = HandyControl.Controls.Dialog.Show(urlDialog, "MainWindowDialog");
         }
@@ -533,6 +536,7 @@ namespace GeekDesk.Control.UserControls.PannelCard
                 HandyControl.Controls.Growl.Warning("不能往「常用」中添加快捷方式。");
                 return;
             }
+            RunTimeStatus.APP_MENU_OR_DIALOG_SHOW = true;
             SystemItemWindow.Show();
         }
 

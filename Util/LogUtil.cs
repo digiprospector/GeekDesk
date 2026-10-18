@@ -19,32 +19,32 @@ namespace GeekDesk.Util
                 using (FileStream fs = File.Open(Constants.ERROR_FILE_PATH, FileMode.OpenOrCreate, FileAccess.ReadWrite))
                 {
                     fs.Seek(0, SeekOrigin.End);
-                    byte[] buffer = Encoding.Default.GetBytes("-------------------------------------------------------\r\n");
+                    byte[] buffer = Encoding.UTF8.GetBytes("-------------------------------------------------------\r\n");
                     fs.Write(buffer, 0, buffer.Length);
 
-                    buffer = Encoding.Default.GetBytes(DateTime.Now.ToString() + msg + "\r\n");
+                    buffer = Encoding.UTF8.GetBytes(DateTime.Now.ToString() + msg + "\r\n");
                     fs.Write(buffer, 0, buffer.Length);
 
                     if (ex != null)
                     {
-                        buffer = Encoding.Default.GetBytes("成员名: " + ex.TargetSite + "\r\n");
+                        buffer = Encoding.UTF8.GetBytes("成员名: " + ex.TargetSite + "\r\n");
                         fs.Write(buffer, 0, buffer.Length);
 
-                        buffer = Encoding.Default.GetBytes("引发异常的类: " + ex.TargetSite.DeclaringType + "\r\n");
+                        buffer = Encoding.UTF8.GetBytes("引发异常的类: " + ex.TargetSite.DeclaringType + "\r\n");
                         fs.Write(buffer, 0, buffer.Length);
 
-                        buffer = Encoding.Default.GetBytes("异常信息: " + ex.Message + "\r\n");
+                        buffer = Encoding.UTF8.GetBytes("异常信息: " + ex.Message + "\r\n");
                         fs.Write(buffer, 0, buffer.Length);
 
-                        buffer = Encoding.Default.GetBytes("引发异常的程序集或对象: " + ex.Source + "\r\n");
+                        buffer = Encoding.UTF8.GetBytes("引发异常的程序集或对象: " + ex.Source + "\r\n");
                         fs.Write(buffer, 0, buffer.Length);
 
-                        buffer = Encoding.Default.GetBytes("栈：" + ex.StackTrace + "\r\n");
+                        buffer = Encoding.UTF8.GetBytes("栈：" + ex.StackTrace + "\r\n");
                         fs.Write(buffer, 0, buffer.Length);
                     }
                     else
                     {
-                        buffer = Encoding.Default.GetBytes("应用程序错误: " + exception.ToString() + "\r\n");
+                        buffer = Encoding.UTF8.GetBytes("应用程序错误: " + exception.ToString() + "\r\n");
                         fs.Write(buffer, 0, buffer.Length);
                     }
                 }
@@ -68,10 +68,10 @@ namespace GeekDesk.Util
                 using (FileStream fs = File.Open(Constants.LOG_FILE_PATH, FileMode.OpenOrCreate, FileAccess.ReadWrite))
                 {
                     fs.Seek(0, SeekOrigin.End);
-                    byte[] buffer = Encoding.Default.GetBytes("-------------------------------------------------------\r\n");
+                    byte[] buffer = Encoding.UTF8.GetBytes("-------------------------------------------------------\r\n");
                     fs.Write(buffer, 0, buffer.Length);
 
-                    buffer = Encoding.Default.GetBytes(DateTime.Now.ToString() + msg + "\r\n");
+                    buffer = Encoding.UTF8.GetBytes(DateTime.Now.ToString() + msg + "\r\n");
                     fs.Write(buffer, 0, buffer.Length);
                 }
             }

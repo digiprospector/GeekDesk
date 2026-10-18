@@ -12,6 +12,9 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Threading;
 using System.Windows.Media.Imaging;
 using static GeekDesk.Control.Other.GlobalMsgNotification;
 
@@ -22,6 +25,39 @@ namespace GeekDesk.Util
 {
     class CommonCode
     {
+        public static bool HasOpenMenuOrDialog()
+        {
+            Window window = MainWindow.mainWindow;
+            if (window != null)
+            {
+                return HasOpenMenuOrDialog(window);
+            }
+            return false;
+        }
+
+        private static bool HasOpenMenuOrDialog(DependencyObject parent)
+        {
+            if (parent == null) return false;
+            if (parent is ContextMenu menu && menu.IsOpen) return true;
+            if (parent is HandyControl.Controls.Dialog dialog && !dialog.IsClosed) return true;
+
+            if (parent is Visual || parent is System.Windows.Media.Media3D.Visual3D)
+            {
+                int count = VisualTreeHelper.GetChildrenCount(parent);
+                for (int index = 0; index < count; index++)
+                {
+                    DependencyObject child = VisualTreeHelper.GetChild(parent, index);
+                    if (HasOpenMenuOrDialog(child)) return true;
+                }
+            }
+
+            foreach (object logicalChild in LogicalTreeHelper.GetChildren(parent))
+            {
+                if (logicalChild is DependencyObject logicalObject && HasOpenMenuOrDialog(logicalObject)) return true;
+            }
+            return false;
+        }
+
 
         /// <summary>
         /// 获取app 数据
@@ -35,12 +71,15 @@ namespace GeekDesk.Util
                 using (FileStream fs = File.Create(Constants.DATA_FILE_PATH)) { }
                 appData = new AppData();
                 SaveAppData(appData, Constants.DATA_FILE_PATH);
+                LogUtil.WriteLog("Data file not found, created new Data file");
                 return appData;
             }
             else
             {
                 try
                 {
+                    var sw = System.Diagnostics.Stopwatch.StartNew();
+                    long fileSize = new FileInfo(Constants.DATA_FILE_PATH).Length;
                     using (FileStream fs = new FileStream(Constants.DATA_FILE_PATH, FileMode.Open))
                     {
                         BinaryFormatter bf = new BinaryFormatter();
@@ -51,11 +90,14 @@ namespace GeekDesk.Util
                         {
                             SavePassword(appData.AppConfig.MenuPassword);
                         }
+                        sw.Stop();
+                        LogUtil.WriteLog("Data file loaded, size: " + fileSize + " bytes, elapsed: " + sw.ElapsedMilliseconds + " ms");
                         return appData;
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
+                    LogUtil.WriteErrorLog(ex, "Data file load failed: ");
                     DirectoryInfo dirInfo = new DirectoryInfo(Constants.DATA_FILE_BAK_DIR_PATH);
                     FileInfo[] files = dirInfo.GetFiles()
                         .Where(f => f.Extension.Equals(".bak", StringComparison.OrdinalIgnoreCase)).ToArray(); ;
@@ -90,6 +132,7 @@ namespace GeekDesk.Util
                                 gm.ntf = ntf;
                                 File.Delete(bakFilePath);
                                 SaveAppData(appData, Constants.DATA_FILE_PATH);
+                                LogUtil.WriteLog("Data file restored from backup: " + bakFile.Name);
                                 return appData;
                             }
                             catch { 
@@ -168,11 +211,24 @@ namespace GeekDesk.Util
                 {
                     Directory.CreateDirectory(filePath.Substring(0, filePath.LastIndexOf("\\")));
                 }
-                using (FileStream fs = new FileStream(filePath, FileMode.Create))
+                var sw = System.Diagnostics.Stopwatch.StartNew();
+                string tempFilePath = filePath + ".tmp";
+                using (FileStream fs = new FileStream(tempFilePath, FileMode.Create, FileAccess.Write, FileShare.None))
                 {
                     BinaryFormatter bf = new BinaryFormatter();
                     bf.Serialize(fs, appData);
+                    fs.Flush();
                 }
+                if (File.Exists(filePath))
+                {
+                    File.Replace(tempFilePath, filePath, null);
+                }
+                else
+                {
+                    File.Move(tempFilePath, filePath);
+                }
+                sw.Stop();
+                LogUtil.WriteLog("Data file saved: " + filePath + ", size: " + new FileInfo(filePath).Length + " bytes, elapsed: " + sw.ElapsedMilliseconds + " ms");
             }
         }
 
@@ -251,6 +307,15 @@ namespace GeekDesk.Util
         {
             string tempPath = path;
 
+            if (".bat".Equals(System.IO.Path.GetExtension(path), StringComparison.OrdinalIgnoreCase))
+            {
+                string batInfo = "path: " + path +
+                    ", exists: " + File.Exists(path) +
+                    ", attributes: " + (File.Exists(path) ? File.GetAttributes(path).ToString() : "N/A") +
+                    ", size: " + (File.Exists(path) ? new FileInfo(path).Length.ToString() : "N/A");
+                LogUtil.WriteLog("GetIconInfoByPath (.bat) - " + batInfo);
+            }
+
             //string base64 = ImageUtil.FileImageToBase64(path, System.Drawing.Imaging.ImageFormat.Png);
             //string ext = "";
             //if (!ImageUtil.IsSystemItem(path))
@@ -275,6 +340,10 @@ namespace GeekDesk.Util
             }
 
             BitmapImage bi = ImageUtil.GetBitmapIconByPath(iconPath);
+            if (".bat".Equals(System.IO.Path.GetExtension(tempPath), StringComparison.OrdinalIgnoreCase))
+            {
+                LogUtil.WriteLog("GetIconInfoByPath (.bat) - iconPath: " + iconPath + ", icon extracted: " + (bi != null));
+            }
             IconInfo iconInfo = new IconInfo
             {
                 Path_NoWrite = path,
@@ -301,6 +370,15 @@ namespace GeekDesk.Util
         {
             string tempPath = path;
 
+            if (".bat".Equals(System.IO.Path.GetExtension(path), StringComparison.OrdinalIgnoreCase))
+            {
+                string batInfo = "path: " + path +
+                    ", exists: " + File.Exists(path) +
+                    ", attributes: " + (File.Exists(path) ? File.GetAttributes(path).ToString() : "N/A") +
+                    ", size: " + (File.Exists(path) ? new FileInfo(path).Length.ToString() : "N/A");
+                LogUtil.WriteLog("GetIconInfoByPath_NoWrite (.bat) - " + batInfo);
+            }
+
             //string base64 = ImageUtil.FileImageToBase64(path, System.Drawing.Imaging.ImageFormat.Png);
             string ext = "";
             if (!ImageUtil.IsSystemItem(path))
@@ -325,6 +403,10 @@ namespace GeekDesk.Util
             }
 
             BitmapImage bi = ImageUtil.GetBitmapIconByPath(iconPath);
+            if (".bat".Equals(System.IO.Path.GetExtension(tempPath), StringComparison.OrdinalIgnoreCase))
+            {
+                LogUtil.WriteLog("GetIconInfoByPath_NoWrite (.bat) - iconPath: " + iconPath + ", icon extracted: " + (bi != null));
+            }
             IconInfo iconInfo = new IconInfo
             {
                 Path_NoWrite = path,

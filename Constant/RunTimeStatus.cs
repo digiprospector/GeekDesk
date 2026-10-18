@@ -43,6 +43,11 @@ namespace GeekDesk.Constant
         public static volatile bool APP_BTN_IS_DOWN = false;
 
         /// <summary>
+        /// 是否存在右键菜单或主面板内弹出的对话框
+        /// </summary>
+        public static volatile bool APP_MENU_OR_DIALOG_SHOW = false;
+
+        /// <summary>
         /// 是否正在编辑菜单
         /// </summary>
         public static volatile bool IS_MENU_EDIT = false;

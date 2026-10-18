@@ -55,12 +55,14 @@ namespace GeekDesk.Control.Other
                 {
                     HandyControl.Controls.Growl.Warning("不能往「常用」中添加快捷方式。");
                     dialog.Close();
+                    RunTimeStatus.APP_MENU_OR_DIALOG_SHOW = false;
                     return;
                 }
                 targetMenu.IconList.Add(info);
             }
             CommonCode.SaveAppData(MainWindow.appData, Constants.DATA_FILE_PATH);
             dialog.Close();
+            RunTimeStatus.APP_MENU_OR_DIALOG_SHOW = false;
         }
 
         /// <summary>

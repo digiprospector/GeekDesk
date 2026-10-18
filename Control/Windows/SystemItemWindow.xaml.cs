@@ -54,6 +54,7 @@ namespace GeekDesk.Control.Windows
         {
             this.DataContext = null;
             this.Close();
+            RunTimeStatus.APP_MENU_OR_DIALOG_SHOW = false;
         }
 
         /// <summary>

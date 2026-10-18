@@ -115,6 +115,7 @@ namespace GeekDesk.Util
                             FileSystemInfo[] fileInfos = dirInfo.GetFileSystemInfos();
 
                             ObservableCollection<IconInfo> iconList = new ObservableCollection<IconInfo>();
+                            ObservableCollection<IconInfo> oldIconList = menuInfo.IconList;
                             Dictionary<string, IconInfo> oldIconMap = menuInfo.IconList == null
                                 ? new Dictionary<string, IconInfo>()
                                 : menuInfo.IconList
@@ -127,6 +128,25 @@ namespace GeekDesk.Util
                                 if (oldIconMap.TryGetValue(iconInfo.Path, out IconInfo oldIconInfo))
                                 {
                                     iconInfo.Count = oldIconInfo.Count;
+                                    iconInfo.DefaultImage_NoWrite = oldIconInfo.DefaultImage;
+                                    bool isCustom = oldIconInfo.ImageByteArr != null
+                                        && (oldIconInfo.DefaultImage == null
+                                            || !oldIconInfo.ImageByteArr.SequenceEqual(oldIconInfo.DefaultImage));
+                                    LogUtil.WriteLog("RefreshLinkMenuIcon - path: " + iconInfo.Path +
+                                        ", oldIconBytes: " + (oldIconInfo.ImageByteArr == null ? "null" : oldIconInfo.ImageByteArr.Length.ToString()) +
+                                        ", oldDefaultBytes: " + (oldIconInfo.DefaultImage == null ? "null" : oldIconInfo.DefaultImage.Length.ToString()) +
+                                        ", isCustom: " + isCustom);
+                                    if (oldIconInfo.ImageByteArr != null
+                                        && (oldIconInfo.DefaultImage == null
+                                            || !oldIconInfo.ImageByteArr.SequenceEqual(oldIconInfo.DefaultImage)))
+                                    {
+                                        iconInfo.ImageByteArr_NoWrite = oldIconInfo.ImageByteArr;
+                                        LogUtil.WriteLog("RefreshLinkMenuIcon - custom icon restored: " + iconInfo.Path);
+                                    }
+                                }
+                                else
+                                {
+                                    LogUtil.WriteLog("RefreshLinkMenuIcon - no old icon found: " + iconInfo.Path);
                                 }
                                 iconList.Add(iconInfo);
                             }
@@ -134,6 +154,10 @@ namespace GeekDesk.Util
                             {
                                 menuInfo.IconList = null;
                                 menuInfo.IconList = iconList;
+                                if (appData.AppConfig.SelectedMenuIcons == oldIconList)
+                                {
+                                    appData.AppConfig.SelectedMenuIcons = iconList;
+                                }
                             });
                         }
                     }

@@ -661,8 +661,15 @@ namespace GeekDesk
                 MarginHide.IS_HIDE = false;
                 if (!CommonCode.MouseInWindow(mainWindow))
                 {
-                    RunTimeStatus.MARGIN_HIDE_AND_OTHER_SHOW = true;
-                    MarginHide.WaitHide(3000);
+                    if (RunTimeStatus.APP_MENU_OR_DIALOG_SHOW)
+                    {
+                        RunTimeStatus.MARGIN_HIDE_AND_OTHER_SHOW = true;
+                    }
+                    else
+                    {
+                        RunTimeStatus.MARGIN_HIDE_AND_OTHER_SHOW = true;
+                        MarginHide.WaitHide(3000);
+                    }
                 }
             }
 
@@ -706,6 +713,10 @@ namespace GeekDesk
 
         public static void HideApp()
         {
+            if (RunTimeStatus.APP_MENU_OR_DIALOG_SHOW)
+            {
+                return;
+            }
             if (appData.AppConfig.AppAnimation)
             {
                 appData.AppConfig.IsShow = false;
@@ -843,6 +854,7 @@ namespace GeekDesk
         /// <param name="e"></param>
         private void ConfigButtonClick(object sender, RoutedEventArgs e)
         {
+            RunTimeStatus.APP_MENU_OR_DIALOG_SHOW = true;
             SettingMenus.IsOpen = true;
         }
 
@@ -853,6 +865,7 @@ namespace GeekDesk
         /// <param name="e"></param>
         private void ConfigMenuClick(object sender, RoutedEventArgs e)
         {
+            RunTimeStatus.APP_MENU_OR_DIALOG_SHOW = false;
             ConfigWindow.Show(appData.AppConfig, this);
         }
         /// <summary>
@@ -862,6 +875,7 @@ namespace GeekDesk
         /// <param name="e"></param>
         private void BacklogMenuClick(object sender, RoutedEventArgs e)
         {
+            RunTimeStatus.APP_MENU_OR_DIALOG_SHOW = false;
             ToDoWindow.Show();
         }
         /// <summary>
@@ -872,6 +886,10 @@ namespace GeekDesk
         private void SettingButton_Initialized(object sender, EventArgs e)
         {
             SettingButton.ContextMenu = null;
+            SettingMenus.Closed += (s, e2) =>
+            {
+                RunTimeStatus.APP_MENU_OR_DIALOG_SHOW = false;
+            };
         }
 
 
@@ -1048,7 +1066,10 @@ namespace GeekDesk
 
         private void AppWindow_Deactivated(object sender, EventArgs e)
         {
-            AppWindowLostFocus();
+            if (!RunTimeStatus.APP_MENU_OR_DIALOG_SHOW)
+            {
+                AppWindowLostFocus();
+            }
         }
 
         /// <summary>
@@ -1241,6 +1262,7 @@ namespace GeekDesk
 
         private void Guide_Click(object sender, RoutedEventArgs e)
         {
+            RunTimeStatus.APP_MENU_OR_DIALOG_SHOW = false;
             Guide();
         }
     }

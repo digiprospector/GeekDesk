@@ -41,6 +41,7 @@ namespace GeekDesk.Control.Other
             info.StartArg = StartArg.Text;
             CommonCode.SaveAppData(MainWindow.appData, Constants.DATA_FILE_PATH);
             dialog.Close();
+            RunTimeStatus.APP_MENU_OR_DIALOG_SHOW = false;
         }
 
         /// <summary>

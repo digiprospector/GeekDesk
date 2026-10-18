@@ -85,6 +85,7 @@ namespace GeekDesk.Control.Other
                     {
                         //隐藏弹框
                         MainWindow.mainWindow.RightCard.PDDialog.Visibility = Visibility.Collapsed;
+                        RunTimeStatus.APP_MENU_OR_DIALOG_SHOW = false;
                         //赋值
                         MainWindow.appData.AppConfig.SelectedMenuIcons
                             = appData.MenuList[
@@ -231,6 +232,7 @@ namespace GeekDesk.Control.Other
             appData.AppConfig.MenuPassword = tempPassword;
             CommonCode.SavePassword(tempPassword);
             MainWindow.mainWindow.RightCard.PDDialog.Visibility = Visibility.Collapsed;
+            RunTimeStatus.APP_MENU_OR_DIALOG_SHOW = false;
             PasswordGrid.Visibility = Visibility.Visible;
             HintGrid.Visibility = Visibility.Collapsed;
             if (tempType == PasswordType.ALTER)

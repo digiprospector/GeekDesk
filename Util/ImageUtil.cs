@@ -46,7 +46,7 @@ namespace GeekDesk.Util
                 PngBitmapEncoder encoder = new PngBitmapEncoder();
                 encoder.Frames.Add(BitmapFrame.Create(bi));
                 encoder.Save(memStream);
-                return memStream.GetBuffer();
+                return memStream.ToArray();
             }
         }
 
