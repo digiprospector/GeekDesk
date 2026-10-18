@@ -211,24 +211,11 @@ namespace GeekDesk.Util
                 {
                     Directory.CreateDirectory(filePath.Substring(0, filePath.LastIndexOf("\\")));
                 }
-                var sw = System.Diagnostics.Stopwatch.StartNew();
-                string tempFilePath = filePath + ".tmp";
-                using (FileStream fs = new FileStream(tempFilePath, FileMode.Create, FileAccess.Write, FileShare.None))
+                using (FileStream fs = new FileStream(filePath, FileMode.Create))
                 {
                     BinaryFormatter bf = new BinaryFormatter();
                     bf.Serialize(fs, appData);
-                    fs.Flush();
                 }
-                if (File.Exists(filePath))
-                {
-                    File.Replace(tempFilePath, filePath, null);
-                }
-                else
-                {
-                    File.Move(tempFilePath, filePath);
-                }
-                sw.Stop();
-                LogUtil.WriteLog("Data file saved: " + filePath + ", size: " + new FileInfo(filePath).Length + " bytes, elapsed: " + sw.ElapsedMilliseconds + " ms");
             }
         }
 
