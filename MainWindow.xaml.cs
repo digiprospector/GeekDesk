@@ -1,4 +1,4 @@
-﻿using GeekDesk.Constant;
+using GeekDesk.Constant;
 using GeekDesk.Control.Other;
 using GeekDesk.Control.UserControls.Config;
 using GeekDesk.Control.UserControls.PannelCard;
@@ -300,6 +300,8 @@ namespace GeekDesk
 
             appData = CommonCode.GetAppDataByFile();
 
+            CommonCode.IsStartupInitializing = true;
+
             this.DataContext = appData;
             if (appData.MenuList.Count == 0)
             {
@@ -307,7 +309,16 @@ namespace GeekDesk
             }
 
             appData.EnsureFrequentMenu();
-            FrequentStats.Refresh(appData);
+            bool suppressDataSave = CommonCode.SuppressDataSave;
+            CommonCode.SuppressDataSave = true;
+            try
+            {
+                FrequentStats.Refresh(appData);
+            }
+            finally
+            {
+                CommonCode.SuppressDataSave = suppressDataSave;
+            }
 
             this.Width = appData.AppConfig.WindowWidth;
             this.Height = appData.AppConfig.WindowHeight;
@@ -326,6 +337,12 @@ namespace GeekDesk
         /// <param name="e"></param>
         void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            bool suppressDataSave = CommonCode.SuppressDataSave;
+            bool isStartupInitializing = CommonCode.IsStartupInitializing;
+            CommonCode.SuppressDataSave = true;
+            CommonCode.IsStartupInitializing = true;
+            try
+            {
             UpdateTopBarDate();
             var topBarTimer = new System.Windows.Threading.DispatcherTimer
             {
@@ -426,6 +443,22 @@ namespace GeekDesk
             BakTask.Start();
 
             Keyboard.Focus(SearchBox);
+            }
+            finally
+            {
+                CommonCode.SuppressDataSave = suppressDataSave;
+                CommonCode.IsStartupInitializing = isStartupInitializing;
+                var startupSaveTimer = new System.Windows.Threading.DispatcherTimer
+                {
+                    Interval = TimeSpan.FromSeconds(3)
+                };
+                startupSaveTimer.Tick += (s, args) =>
+                {
+                    ((System.Windows.Threading.DispatcherTimer)s).Stop();
+                    CommonCode.IsStartupInitializing = false;
+                };
+                startupSaveTimer.Start();
+            }
 
             MessageUtil.ChangeWindowMessageFilter(MessageUtil.WM_COPYDATA, 1);
 
@@ -685,11 +718,12 @@ namespace GeekDesk
             //mainWindow.Visibility = Visibility.Visible;
             if (appData.AppConfig.AppAnimation)
             {
-                appData.AppConfig.IsShow = true;
+            appData.AppConfig.IsShow = true;
             }
             else
             {
-                appData.AppConfig.IsShow = null;
+            appData.AppConfig.IsShow = null;
+            CommonCode.SaveAppData(appData, Constants.DATA_FILE_PATH);
                 //防止永远不显示界面
                 if (mainWindow.Opacity < 1)
                 {

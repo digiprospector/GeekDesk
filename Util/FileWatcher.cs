@@ -107,6 +107,8 @@ namespace GeekDesk.Util
             {
                 try
                 {
+                    bool oldSuppress = CommonCode.SuppressDataSave;
+                    CommonCode.SuppressDataSave = true;
                     foreach (MenuInfo menuInfo in appData.MenuList)
                     {
                         if (menuInfo.MenuType == Constant.MenuType.LINK)
@@ -129,24 +131,12 @@ namespace GeekDesk.Util
                                 {
                                     iconInfo.Count = oldIconInfo.Count;
                                     iconInfo.DefaultImage_NoWrite = oldIconInfo.DefaultImage;
-                                    bool isCustom = oldIconInfo.ImageByteArr != null
-                                        && (oldIconInfo.DefaultImage == null
-                                            || !oldIconInfo.ImageByteArr.SequenceEqual(oldIconInfo.DefaultImage));
-                                    LogUtil.WriteLog("RefreshLinkMenuIcon - path: " + iconInfo.Path +
-                                        ", oldIconBytes: " + (oldIconInfo.ImageByteArr == null ? "null" : oldIconInfo.ImageByteArr.Length.ToString()) +
-                                        ", oldDefaultBytes: " + (oldIconInfo.DefaultImage == null ? "null" : oldIconInfo.DefaultImage.Length.ToString()) +
-                                        ", isCustom: " + isCustom);
                                     if (oldIconInfo.ImageByteArr != null
                                         && (oldIconInfo.DefaultImage == null
                                             || !oldIconInfo.ImageByteArr.SequenceEqual(oldIconInfo.DefaultImage)))
                                     {
                                         iconInfo.ImageByteArr_NoWrite = oldIconInfo.ImageByteArr;
-                                        LogUtil.WriteLog("RefreshLinkMenuIcon - custom icon restored: " + iconInfo.Path);
                                     }
-                                }
-                                else
-                                {
-                                    LogUtil.WriteLog("RefreshLinkMenuIcon - no old icon found: " + iconInfo.Path);
                                 }
                                 iconList.Add(iconInfo);
                             }
@@ -161,8 +151,12 @@ namespace GeekDesk.Util
                             });
                         }
                     }
+                    CommonCode.SuppressDataSave = oldSuppress;
                 }
-                catch (Exception) { }
+                catch (Exception)
+                {
+                    CommonCode.SuppressDataSave = false;
+                }
             }).Start();
         }
 
