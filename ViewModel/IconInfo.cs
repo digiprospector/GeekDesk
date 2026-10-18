@@ -1,4 +1,4 @@
-﻿using GeekDesk.Constant;
+using GeekDesk.Constant;
 using GeekDesk.Util;
 using System;
 using System.ComponentModel;
@@ -362,7 +362,11 @@ namespace GeekDesk.ViewModel
         private void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            if (propertyName!=null && !propertyName.Contains("NoWrite"))
+            if (propertyName != null && propertyName == "Count")
+            {
+                CommonCode.SaveAppData(MainWindow.appData, Constants.DATA_FILE_PATH, true);
+            }
+            else if (propertyName != null && !propertyName.Contains("NoWrite"))
             {
                 CommonCode.SaveAppData(MainWindow.appData, Constants.DATA_FILE_PATH);
             }
